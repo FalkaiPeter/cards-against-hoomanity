@@ -1,7 +1,7 @@
 import type { DefaultEventsMap } from '@socket.io/component-emitter';
 import { io, Socket } from 'socket.io-client';
 import { clock, gameRoom, player } from 'stores';
-import { replace } from 'svelte-spa-router';
+import { push, replace } from 'svelte-spa-router';
 import { get } from 'svelte/store';
 import type { GameRoom } from 'vite-env';
 
@@ -14,12 +14,12 @@ export class EventManager {
   }
 
   createRoom(packs: number[]) {
-    this.socket.once('server:gameroom:create', (roomID) => replace(`/lobby/${roomID}`));
+    this.socket.once('server:gameroom:create', (roomID) => push(`/lobby/${roomID}`));
     this.socket.emit('client:gameroom:create', { packs, owner: get(player).uid });
   }
 
   joinRoom(roomID: string) {
-    this.socket.once('server:gameroom:join:success', () => console.info('successful join'));
+    this.socket.once('server:gameroom:join:success', () => push(`/lobby/${roomID}`));
     this.socket.emit('client:gameroom:join', { roomID, ...get(player) });
   }
 

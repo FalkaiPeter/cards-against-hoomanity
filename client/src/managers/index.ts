@@ -1,3 +1,3 @@
 import { EventManager } from './_event';
 
-export default new EventManager();
+export const eventManager = new EventManager();
