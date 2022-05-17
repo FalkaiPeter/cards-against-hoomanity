@@ -63,6 +63,12 @@ export class GameRoomManager {
     return true;
   }
 
+  isAllPlayerPicked(roomID: string) {
+    const { black, players } = this.__gameRooms[roomID];
+    const { pick } = cards.black[black];
+    return values(players).every((player) => player.picks.length === pick);
+  }
+
   givePoint({ roomID, uid }) {
     this.__gameRooms[roomID].players[uid].points += 1;
   }
