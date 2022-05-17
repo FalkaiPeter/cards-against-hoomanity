@@ -1,7 +1,7 @@
 import { get, writable } from 'svelte/store';
 import { uuid } from 'utils';
 
-export function initUserStore() {
+export function initPlayerStore() {
   const base = writable<{ uid: string; name: string }>({
     name: localStorage.getItem('name') || '',
     uid: sessionStorage.getItem('uid') || uuid(),
