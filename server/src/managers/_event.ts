@@ -22,9 +22,9 @@ export class EventManager {
         socket.emit('server:gameroom:create', id);
       });
 
-      socket.on('client:gameroom:join', ({ roomID, name }) => {
-        const uid = this.__gameRoomManager.join({ roomID, name });
-        socket.emit('server:gameroom:join', uid);
+      socket.on('client:gameroom:join', ({ roomID, name, uid }) => {
+        this.__gameRoomManager.join({ roomID, name, uid });
+        socket.emit('server:gameroom:join:success');
         this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID));
         socket.join(roomID);
       });
@@ -33,7 +33,7 @@ export class EventManager {
         const gameRoom = this.__gameRoomManager.gameRoom(roomID);
         if (uid in gameRoom.players) {
           socket.join(roomID);
-          socket.emit('server:gameroom:rejoin:success', gameRoom);
+          socket.emit('server:gameroom:rejoin:success');
         } else socket.emit('server.gameroom:rejoin:failure');
       });
 

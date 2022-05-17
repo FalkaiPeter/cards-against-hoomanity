@@ -20,11 +20,11 @@ export class GameRoomManager {
     return room;
   }
 
-  join({ roomID, name }) {
-    const player = Player({ name });
-    this.__gameRooms[roomID].players[player.id] = player;
-    console.log('player with uid:', player.id, 'joined to room', roomID);
-    return player.id;
+  join({ roomID, name, uid }) {
+    const player = Player({ name, id: uid });
+    this.__gameRooms[roomID].players[uid] = player;
+    console.log('player with uid:', uid, 'joined to room', roomID);
+    return uid;
   }
 
   start(roomID: string) {
