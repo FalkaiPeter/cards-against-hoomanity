@@ -1,3 +1,3 @@
-import { EventManager } from 'managers/_event';
+import { EventManager } from 'managers';
 
 new EventManager();
