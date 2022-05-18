@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { ClockManager } from './_clock';
-import { GameRoomManager } from './_gameRoom';
+import { log } from 'utils';
+import { ClockManager, GameRoomManager } from 'managers';
 
 export class EventManager {
   private __io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
@@ -14,27 +14,33 @@ export class EventManager {
     this.__clockManager = new ClockManager();
 
     this.__io.on('connection', (socket) => {
-      console.log(socket.id, 'connected');
+      log('connection', { Socket: socket.id });
       socket.emit('connected', socket.id);
 
       socket.on('client:gameroom:create', ({ packs, owner }) => {
-        const { id } = this.__gameRoomManager.create({ packs, owner });
-        socket.emit('server:gameroom:create', id);
+        const gameRoom = this.__gameRoomManager.create({ packs, owner });
+
+        socket.emit('server:gameroom:create', gameRoom.id);
+
+        log('gameroom created', {
+          Socket: socket.id,
+          GameRoom: gameRoom,
+        });
       });
 
       socket.on('client:gameroom:join', ({ roomID, name, uid }) => {
-        this.__gameRoomManager.join({ roomID, name, uid });
+        const { players } = this.__gameRoomManager.gameRoom(roomID);
+        if (!(uid in players)) this.__gameRoomManager.join({ roomID, name, uid });
+
+        socket.join(roomID);
         socket.emit('server:gameroom:join:success');
         this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID));
-        socket.join(roomID);
-      });
 
-      socket.on('client:gameroom:rejoin', ({ roomID, uid }) => {
-        const gameRoom = this.__gameRoomManager.gameRoom(roomID);
-        if (uid in gameRoom.players) {
-          socket.join(roomID);
-          socket.emit('server:gameroom:rejoin:success');
-        } else socket.emit('server.gameroom:rejoin:failure');
+        log('player join to gameroom', {
+          Socket: socket.id,
+          'Player UID': uid,
+          GameRoom: this.__gameRoomManager.gameRoom(roomID),
+        });
       });
 
       socket.on('client:gameroom:start', (roomID) => {
@@ -46,17 +52,36 @@ export class EventManager {
 
         this.__io.to(roomID).emit('server:gameroom:start');
         this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID));
+
+        log('game start', {
+          Socket: socket.id,
+          'GameRoom:': this.__gameRoomManager.gameRoom(roomID),
+        });
       });
 
       socket.on('client:gameroom:player:pick', ({ roomID, uid, picks }) => {
         const res = this.__gameRoomManager.playerPick({ roomID, uid, picks });
-
         if (this.__gameRoomManager.isAllPlayerPicked(roomID)) this.__clockManager.setCounter(roomID, -1);
 
         if (res) socket.emit('server:gameroom:player:pick:success');
         else socket.emit('server:gameroom:player:pick:failure');
+        this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID));
 
-        this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoom(roomID));
+        log('player pick', {
+          Socket: socket.id,
+          'Player UID': uid,
+          Picks: picks,
+          GameRoom: this.__gameRoomManager.gameRoom(roomID),
+        });
+      });
+
+      socket.on('client:gameroom:load', (roomID) => {
+        socket.emit('server:gameroom:load', this.__gameRoomManager.gameRoomClient(roomID));
+
+        log('game load', {
+          Socket: socket.id,
+          'GameRoom:': this.__gameRoomManager.gameRoom(roomID),
+        });
       });
 
       socket.on('client:gameroom:czar:pick', ({ roomID, uid }) => {
@@ -65,7 +90,13 @@ export class EventManager {
         this.__gameRoomManager.dealBlack(roomID);
         this.__gameRoomManager.dealHand(roomID);
         this.__clockManager.setCounter(roomID, 60);
+
         this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoom(roomID));
+
+        log('czar pick', {
+          Socket: socket.id,
+          'GameRoom:': this.__gameRoomManager.gameRoom(roomID),
+        });
       });
     });
   }
