@@ -16,20 +16,17 @@ export class GameRoomManager {
   create({ packs, owner }) {
     const room = GameRoom({ packs, owner });
     this.__gameRooms[room.id] = room;
-    console.log('gameRoom created with id:', room.id);
     return room;
   }
 
   join({ roomID, name, uid }) {
     const player = Player({ name, id: uid });
     this.__gameRooms[roomID].players[uid] = player;
-    console.log('player with uid:', uid, 'joined to room', roomID);
     return uid;
   }
 
   start(roomID: string) {
     this.__gameRooms[roomID].state = 'running';
-    console.log('gameroom with id', roomID, 'started');
   }
 
   dealHand(roomID: string) {

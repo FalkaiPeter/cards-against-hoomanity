@@ -1,7 +1,9 @@
 <script lang="ts">
   import { Game, GameCreator, GameLobby, Landing, NotFound } from 'routes';
-  import { cards } from 'stores';
+  import { cards, gameRoom } from 'stores';
   import Router from 'svelte-spa-router';
+
+  $: console.log($gameRoom);
 
   const routes = {
     '/': Landing,

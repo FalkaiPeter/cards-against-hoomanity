@@ -18,19 +18,12 @@ export class EventManager {
     this.socket.emit('client:gameroom:create', { packs, owner: get(player).uid });
   }
 
-  joinRoom(roomID: string) {
-    this.socket.once('server:gameroom:join:success', () => push(`/lobby/${roomID}`));
+  joinRoom(roomID: string, onSuccess?: () => void) {
+    this.socket.once('server:gameroom:join:success', onSuccess);
     this.socket.emit('client:gameroom:join', { roomID, ...get(player) });
   }
 
-  rejoinRoom(roomID: string) {
-    this.socket.once('server:gameroom:rejoin:success', () => console.info('successful rejoin'));
-    this.socket.once('server.gameroom:rejoin:failure', () => console.info('rejoin failed'));
-    this.socket.emit('client:gameroom:rejoin', { roomID, uid: get(player).uid });
-  }
-
   gameStart() {
-    this.socket.once('server:gameroom:start', () => replace(`/game/${get(gameRoom).id}`));
     this.socket.emit('client:gameroom:start', get(gameRoom).id);
   }
 
@@ -44,7 +37,16 @@ export class EventManager {
     this.socket.emit('client:gameroom:czar:pick', { roomID: get(gameRoom).id, uid });
   }
 
-  listenRoom() {
+  loadGameRoom(roomID: string) {
+    this.socket.once('server:gameroom:load', (room: GameRoom) => gameRoom.set(room));
+    this.socket.emit('client:gameroom:load', roomID);
+  }
+
+  listenGameStart() {
+    this.socket.once('server:gameroom:start', () => replace(`/game/${get(gameRoom).id}`));
+  }
+
+  listenGameRoom() {
     this.socket.on('server:gameroom:update', (room: GameRoom) => gameRoom.set(room));
   }
 

@@ -9,10 +9,10 @@ export function initPlayerStore() {
 
   sessionStorage.setItem('uid', get(base).uid);
 
-  const name = (name: string) => {
+  const set = ({ name }: { name: string }) => {
     base.update((state) => ({ ...state, name }));
     localStorage.setItem('name', name);
   };
 
-  return { subscribe: base.subscribe, name };
+  return { subscribe: base.subscribe, set };
 }
