@@ -1,3 +1,7 @@
+import { createServer } from 'http';
 import { EventManager } from 'managers';
 
-new EventManager();
+const httpServer = createServer();
+new EventManager(httpServer);
+
+httpServer.listen(process.env.PORT);

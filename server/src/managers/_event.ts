@@ -9,8 +9,8 @@ export class EventManager {
   private __gameRoomManager: GameRoomManager;
   private __clockManager: ClockManager;
 
-  constructor() {
-    this.__io = new Server(+process.env.PORT!, { cors: { origin: '*' } });
+  constructor(httpServer: any) {
+    this.__io = new Server(httpServer, { cors: { origin: '*' } });
     this.__gameRoomManager = new GameRoomManager();
     this.__clockManager = new ClockManager();
 
