@@ -9,8 +9,8 @@ export class EventManager {
   private __gameRoomManager: GameRoomManager;
   private __clockManager: ClockManager;
 
-  constructor(httpServer: any) {
-    this.__io = new Server(httpServer, { cors: { origin: 'https://cards-against-hoomanity-client.herokuapp.com' } });
+  constructor(server: any) {
+    this.__io = new Server(server, { cors: { origin: '*' } });
     this.__gameRoomManager = new GameRoomManager();
     this.__clockManager = new ClockManager();
 

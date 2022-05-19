@@ -1,7 +1,6 @@
-import { createServer } from 'http';
 import { EventManager } from 'managers';
+import express from 'express';
 
-const httpServer = createServer();
-new EventManager(httpServer);
-
-httpServer.listen(process.env.PORT);
+const app = express();
+const server = app.listen(process.env.PORT);
+new EventManager(server);
