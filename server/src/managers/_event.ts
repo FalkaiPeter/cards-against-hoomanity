@@ -10,7 +10,7 @@ export class EventManager {
   private __clockManager: ClockManager;
 
   constructor() {
-    this.__io = new Server(4000, { cors: { origin: '*' } });
+    this.__io = new Server(+process.env.PORT!, { cors: { origin: '*' } });
     this.__gameRoomManager = new GameRoomManager();
     this.__clockManager = new ClockManager();
 
