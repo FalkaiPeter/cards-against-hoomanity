@@ -10,7 +10,7 @@ export class EventManager {
   private __clockManager: ClockManager;
 
   constructor(httpServer: any) {
-    this.__io = new Server(httpServer, { cors: { origin: '*' } });
+    this.__io = new Server(httpServer, { cors: { origin: 'https://cards-against-hoomanity-client.herokuapp.com' } });
     this.__gameRoomManager = new GameRoomManager();
     this.__clockManager = new ClockManager();
 
@@ -92,12 +92,12 @@ export class EventManager {
       socket.on('client:gameroom:czar:pick', ({ roomID, uid }) => {
         this.__gameRoomManager.givePoint({ roomID, uid });
         this.__gameRoomManager.changeCzar({ roomID, uid });
-        this.__gameRoomManager.clearPlayerPicks(roomID);
         this.__gameRoomManager.dealBlack(roomID);
         this.__gameRoomManager.dealHand(roomID);
         this.__clockManager.setCounter(roomID, 60);
+        this.__gameRoomManager.clearPlayerPicks(roomID);
 
-        this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoom(roomID));
+        this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID));
 
         log('czar pick', {
           Socket: socket.id,
