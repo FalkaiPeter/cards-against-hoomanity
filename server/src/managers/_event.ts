@@ -2,6 +2,7 @@ import { Server } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { log } from 'utils';
 import { ClockManager, GameRoomManager } from 'managers';
+import reduce from 'lodash/reduce';
 
 export class EventManager {
   private __io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
@@ -48,7 +49,11 @@ export class EventManager {
         this.__gameRoomManager.dealBlack(roomID);
         this.__gameRoomManager.dealHand(roomID);
         this.__gameRoomManager.changeCzar({ roomID, uid: this.__gameRoomManager.gameRoom(roomID).owner });
-        this.__clockManager.create(roomID, (counter) => this.__io.to(roomID).emit('server:clock:tick', counter));
+        this.__clockManager.create(roomID, (counter) => {
+          if (counter === 0 && !this.__gameRoomManager.anyPlayerPicked(roomID))
+            this.__clockManager.setCounter(roomID, 60);
+          this.__io.to(roomID).emit('server:clock:tick', counter);
+        });
 
         this.__io.to(roomID).emit('server:gameroom:start');
         this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID));
@@ -87,6 +92,7 @@ export class EventManager {
       socket.on('client:gameroom:czar:pick', ({ roomID, uid }) => {
         this.__gameRoomManager.givePoint({ roomID, uid });
         this.__gameRoomManager.changeCzar({ roomID, uid });
+        this.__gameRoomManager.clearPlayerPicks(roomID);
         this.__gameRoomManager.dealBlack(roomID);
         this.__gameRoomManager.dealHand(roomID);
         this.__clockManager.setCounter(roomID, 60);

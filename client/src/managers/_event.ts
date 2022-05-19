@@ -50,7 +50,15 @@ export class EventManager {
     this.socket.on('server:gameroom:update', (room: GameRoom) => gameRoom.set(room));
   }
 
+  offGameRoom() {
+    this.socket.off('server:gameroom:update');
+  }
+
   listenClock() {
     this.socket.on('server:clock:tick', (counter) => clock.set(counter));
+  }
+
+  offClock() {
+    this.socket.off('server:clock:tick');
   }
 }

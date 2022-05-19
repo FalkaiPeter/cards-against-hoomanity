@@ -10,7 +10,7 @@ export interface Clock {
 export const Clock = (fields?: Partial<Clock>): Clock => ({
   id: uuid(),
   cb: () => {},
-  counter: -1,
+  counter: 60,
   interval: setInterval(() => {}, Infinity),
   ...fields,
 });

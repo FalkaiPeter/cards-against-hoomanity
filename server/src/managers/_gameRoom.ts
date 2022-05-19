@@ -5,6 +5,7 @@ import sampleSize from 'lodash/sampleSize';
 import values from 'lodash/values';
 import difference from 'lodash/difference';
 import cards from 'cards.json';
+import reduce from 'lodash/reduce';
 
 export class GameRoomManager {
   private __gameRooms: Record<string, GameRoom>;
@@ -60,10 +61,14 @@ export class GameRoomManager {
     return true;
   }
 
+  anyPlayerPicked(roomID: string) {
+    return !!reduce(this.__gameRooms[roomID].players, (prev, curr) => (prev += curr.picks.length), 0);
+  }
+
   isAllPlayerPicked(roomID: string) {
-    const { black, players } = this.__gameRooms[roomID];
+    const { black, players, czar } = this.__gameRooms[roomID];
     const { pick } = cards.black[black];
-    return values(players).every((player) => player.picks.length === pick);
+    return values(players).every((player) => player.id === czar || player.picks.length === pick);
   }
 
   givePoint({ roomID, uid }) {
@@ -72,6 +77,10 @@ export class GameRoomManager {
 
   changeCzar({ roomID, uid }) {
     this.__gameRooms[roomID].czar = uid;
+  }
+
+  clearPlayerPicks(roomID) {
+    for (const key in this.__gameRooms[roomID].players) this.__gameRooms[roomID].players[key].picks = [];
   }
 
   gameRoom(roomID: string) {
