@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": "src",
-    "outDir": "build",
+    "outDir": "dist",
     "sourceRoot": "src",
     "sourceMap": true
   },

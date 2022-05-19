@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && tsc-alias",
-    "start": "yarn build && node build"
+    "start": "node dist"
   },
   "dependencies": {
     "immer": "^9.0.14",
