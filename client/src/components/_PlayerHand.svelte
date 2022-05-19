@@ -16,13 +16,20 @@
     else picks = [...picks, index];
   };
 
-  const handleCommit = () => eventManager.playerPick(picks);
+  const handleCommit = () =>
+    eventManager.playerPick(
+      picks,
+      () => {
+        console.info('successful pick');
+        picks = [];
+      },
+      () => console.info('pick failed')
+    );
 
   $: isEnoughSelected = picks.length === $cards.black[$gameRoom.black]?.pick || false;
   $: isPlayerPicked = !!$gameRoom.players[$player.uid]?.picks.length || false;
   $: isClockRunning = $clock > 0;
   $: isCzar = $player.uid === $gameRoom.czar;
-  $: console.log(picks);
 </script>
 
 {#if $gameRoom.players[$player.uid]}

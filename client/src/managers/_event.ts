@@ -27,9 +27,9 @@ export class EventManager {
     this.socket.emit('client:gameroom:start', get(gameRoom).id);
   }
 
-  playerPick(picks: number[]) {
-    this.socket.once('server:gameroom:player:pick:success', () => console.info('successful pick'));
-    this.socket.once('server:gameroom:player:pick:failure', () => console.info('pick failed'));
+  playerPick(picks: number[], onSuccess?: () => void, onFailure?: () => void) {
+    this.socket.once('server:gameroom:player:pick:success', onSuccess);
+    this.socket.once('server:gameroom:player:pick:failure', onFailure);
     this.socket.emit('client:gameroom:player:pick', { roomID: get(gameRoom).id, uid: get(player).uid, picks });
   }
 

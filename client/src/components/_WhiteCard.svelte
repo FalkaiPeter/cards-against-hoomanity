@@ -5,8 +5,6 @@
   export let hidden: boolean;
   export let disabled: boolean;
   export let selectedIndex: number;
-
-  $: console.log(selectedIndex);
 </script>
 
 <button {disabled} on:click>
