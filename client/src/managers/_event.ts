@@ -9,7 +9,7 @@ export class EventManager {
   private socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
   constructor() {
-    this.socket = io('ws://localhost:4000');
+    this.socket = io('https://cards-against-hoomanity-server.herokuapp.com/');
     this.socket.on('connected', () => console.info('connected'));
   }
 
