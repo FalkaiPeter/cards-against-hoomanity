@@ -79,7 +79,7 @@ export class GameRoomManager {
     this.__gameRooms[roomID].czar = uid;
   }
 
-  clearPlayerPicks(roomID) {
+  clearPlayerPicks(roomID: string) {
     for (const key in this.__gameRooms[roomID].players) this.__gameRooms[roomID].players[key].picks = [];
   }
 

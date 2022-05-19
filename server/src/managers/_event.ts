@@ -96,11 +96,7 @@ export class EventManager {
         this.__gameRoomManager.dealHand(roomID);
         this.__clockManager.setCounter(roomID, 60);
         this.__gameRoomManager.clearPlayerPicks(roomID);
-
-        setTimeout(
-          () => this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID)),
-          200
-        );
+        this.__io.to(roomID).emit('server:gameroom:update', this.__gameRoomManager.gameRoomClient(roomID));
 
         log('czar pick', {
           Socket: socket.id,
