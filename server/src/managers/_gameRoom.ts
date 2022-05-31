@@ -20,6 +20,10 @@ export class GameRoomManager {
     return room;
   }
 
+  isFull(roomID:string) {
+    
+  }
+
   join({ roomID, name, uid }) {
     const player = Player({ name, id: uid });
     this.__gameRooms[roomID].players[uid] = player;

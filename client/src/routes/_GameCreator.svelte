@@ -32,4 +32,8 @@
   li {
     cursor: pointer;
   }
+  button {
+    margin: 1rem 0;
+    width: 100%;
+  }
 </style>

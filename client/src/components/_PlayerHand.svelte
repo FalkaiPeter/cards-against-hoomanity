@@ -43,7 +43,7 @@
     {#each $gameRoom.players[$player.uid].cards as cardIndex}
       <WhiteCard
         selectedIndex={picks.findIndex((v) => v === cardIndex) + 1}
-        disabled={isCzar || !isClockRunning}
+        disabled={isCzar || !isClockRunning || isPlayerPicked}
         {cardIndex}
         hidden={false}
         on:click={handleCardSelect(cardIndex)}

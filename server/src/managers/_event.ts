@@ -30,7 +30,7 @@ export class EventManager {
       });
 
       socket.on('client:gameroom:join', ({ roomID, name, uid }) => {
-        const { players } = this.__gameRoomManager.gameRoom(roomID);
+        const { players, state } = this.__gameRoomManager.gameRoom(roomID);
         if (!(uid in players)) this.__gameRoomManager.join({ roomID, name, uid });
 
         socket.join(roomID);
@@ -66,7 +66,10 @@ export class EventManager {
 
       socket.on('client:gameroom:player:pick', ({ roomID, uid, picks }) => {
         const res = this.__gameRoomManager.playerPick({ roomID, uid, picks });
-        if (this.__gameRoomManager.isAllPlayerPicked(roomID)) this.__clockManager.setCounter(roomID, -1);
+        if (this.__gameRoomManager.isAllPlayerPicked(roomID)) {
+          this.__clockManager.setCounter(roomID, -1);
+          this.__io.to(roomID).emit('server:gameroom:all_picked');
+        }
 
         if (res) socket.emit('server:gameroom:player:pick:success');
         else socket.emit('server:gameroom:player:pick:failure');

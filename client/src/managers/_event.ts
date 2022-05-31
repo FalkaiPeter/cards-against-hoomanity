@@ -55,6 +55,7 @@ export class EventManager {
   }
 
   listenClock() {
+    this.socket.on('server:gameroom:all_picked', () => clock.set(-1));
     this.socket.on('server:clock:tick', (counter) => clock.set(counter));
   }
 

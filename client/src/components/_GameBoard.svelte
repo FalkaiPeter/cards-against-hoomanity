@@ -11,6 +11,7 @@
 
   $: isClockRunning = $clock >= 0;
   $: isCzar = $player.uid === $gameRoom.czar;
+  $: console.log(isClockRunning)
 </script>
 
 <div class="container">
